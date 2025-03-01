@@ -56,6 +56,16 @@ print_message() {
   echo -e "\033[${color}m${message}\033[0m"
 }
 
+# Function to run a tool and handle errors
+run_tool() {
+  local tool_command=$1
+  print_message "Running: $tool_command" "1;32"
+  eval $tool_command
+  if [ $? -ne 0 ]; then
+    print_message "Error running: $tool_command" "1;31"
+  fi
+}
+
 # Execute modules based on arguments
 if [ "$full_scan" == true ]; then
   print_message "🚀 Starting full scan for domain: $domain" "1;36"
