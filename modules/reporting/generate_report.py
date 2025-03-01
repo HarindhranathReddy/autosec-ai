@@ -11,7 +11,7 @@ def load_config():
 
 def load_scan_results(domain, output_directory):
     results = {}
-    for tool in ['subfinder', 'amass', 'assetfinder', 'shuffledns', 'masscan', 'nmap', 'naabu', 'sqlmap', 'xsstrike', 'commix', 'lfisuite', 'smuggler', 'race-the-web']:
+    for tool in ['subfinder', 'assetfinder', 'shuffledns', 'nmap', 'naabu', 'sqlmap', 'xsstrike', 'commix', 'lfisuite', 'smuggler', 'race-the-web']:
         path = f"{output_directory}/{tool}_{domain}.txt"
         if os.path.exists(path):
             with open(path, "r") as file:
@@ -42,4 +42,14 @@ def main():
     args = parser.parse_args()
 
     config = load_config()
-    results = load_scan_results(args
+    results = load_scan_results(args.domain, args.output)
+    formats = config['reporting']['formats']
+    if 'json' in formats:
+        generate_json_report(args.domain, results, args.output)
+    if 'html' in formats:
+        generate_html_report(args.domain, results, args.output)
+    if 'md' in formats:
+        generate_md_report(args.domain, results, args.output)
+
+if __name__ == "__main__":
+    main()
