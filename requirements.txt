@@ -1,0 +1,11 @@
+# Python dependencies for AutoSecAI-Plus
+
+# General dependencies
+PyYAML==6.0
+Jinja2==3.1.2
+
+# OpenAI API client
+openai==0.27.0
+
+# Testing dependencies
+pytest==7.2.1

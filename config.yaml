@@ -1,0 +1,73 @@
+# Configuration file for AutoSecAI-Plus
+
+general:
+  output_directory: "reports"
+  report_formats: ["json", "html", "md"]
+
+reconnaissance:
+  tools:
+    - name: subfinder
+      command: "subfinder -d {domain} -o {output_directory}/recon_subfinder.txt"
+    - name: amass
+      command: "amass enum -d {domain} -o {output_directory}/recon_amass.txt"
+    - name: assetfinder
+      command: "assetfinder --subs-only {domain} > {output_directory}/recon_assetfinder.txt"
+    - name: shuffledns
+      command: "shuffledns -d {domain} -w {output_directory}/recon_amass.txt -r resolvers.txt -o {output_directory}/recon_shuffledns.txt"
+
+scanning:
+  tools:
+    - name: masscan
+      command: "masscan -p1-65535 {domain} --rate=1000 -oX {output_directory}/scan_masscan.xml"
+    - name: nmap
+      command: "nmap -sC -sV -iL {output_directory}/scan_masscan.xml -oN {output_directory}/scan_nmap.txt"
+    - name: naabu
+      command: "naabu -host {domain} -o {output_directory}/scan_naabu.txt"
+
+url_extraction:
+  tools:
+    - name: waybackurls
+      command: "waybackurls {domain} > {output_directory}/urls_waybackurls.txt"
+    - name: gau
+      command: "gau {domain} > {output_directory}/urls_gau.txt"
+    - name: katana
+      command: "katana -u {domain} -o {output_directory}/urls_katana.txt"
+    - name: hakrawler
+      command: "hakrawler -url {domain} -depth 2 -plain > {output_directory}/urls_hakrawler.txt"
+
+vulnerability_detection:
+  tools:
+    - name: nuclei
+      command: "nuclei -l {output_directory}/urls.txt -o {output_directory}/vuln_nuclei.txt"
+    - name: gf
+      command: "cat {output_directory}/urls.txt | gf xss > {output_directory}/vuln_gf_xss.txt"
+    - name: nikto
+      command: "nikto -h {domain} -output {output_directory}/vuln_nikto.txt"
+    - name: arachni
+      command: "arachni {domain} --output-only-positives --report-save-path {output_directory}/vuln_arachni.afr"
+    - name: jaeles
+      command: "jaeles scan -s signatures/ -u {domain} -o {output_directory}/vuln_jaeles.txt"
+
+exploitation:
+  tools:
+    - name: sqlmap
+      command: "sqlmap -u {domain} --batch --output-dir={output_directory}/exploit_sqlmap"
+    - name: xsstrike
+      command: "xsstrike -u {domain} -t 10 --output-dir {output_directory}/exploit_xsstrike"
+    - name: commix
+      command: "commix --url={domain} --batch --output-dir={output_directory}/exploit_commix"
+    - name: lf-suite
+      command: "lfisuite -u {domain} -o {output_directory}/exploit_lfisuite.txt"
+    - name: smuggler
+      command: "python3 smuggler.py -u {domain} -o {output_directory}/exploit_smuggler.txt"
+    - name: race-the-web
+      command: "race-the-web -u {domain} -o {output_directory}/exploit_race-the-web.txt"
+
+ai_payloads:
+  api_key: "your_openai_api_key_here"
+  model: "text-davinci-003"
+  prompt_template: "Generate attack payloads for domain {domain}"
+
+reporting:
+  formats: ["json", "html", "md"]
+  template_directory: "templates"
