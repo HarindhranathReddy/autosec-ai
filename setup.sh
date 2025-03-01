@@ -33,10 +33,8 @@ pip3 install -r requirements.txt || error_exit "Failed to install Python depende
 # Install other necessary tools
 tools=(
     subfinder
-    amass
     assetfinder
     shuffledns
-    masscan
     nmap
     naabu
     waybackurls
